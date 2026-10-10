@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrustGate — Decision-Grade AI</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg2: #0f141d;
+    --card: #131a26;
+    --line: #1e2a3a;
+    --text: #e6edf6;
+    --muted: #8b9bb0;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --mono: "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- nav ---------- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(14px);
+    background: rgba(10,14,20,.75);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { font-family: var(--mono); font-weight: 700; font-size: 18px; letter-spacing: .5px; }
+  .brand .gate { color: var(--green); }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; margin-left: 26px; transition: color .2s; }
+  nav a:hover { color: var(--text); }
+
+  /* ---------- hero ---------- */
+  header {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative;
+    background:
+      radial-gradient(ellipse 60% 45% at 70% 15%, rgba(52,211,153,.10), transparent),
+      radial-gradient(ellipse 55% 45% at 15% 85%, rgba(96,165,250,.08), transparent),
+      var(--bg);
+    padding-top: 60px;
+  }
+  .badge {
+    display: inline-block; font-family: var(--mono); font-size: 12px;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 14px; color: var(--green); background: rgba(52,211,153,.07);
+    margin-bottom: 26px;
+  }
+  h1 {
+    font-size: clamp(42px, 7vw, 76px);
+    font-weight: 800; line-height: 1.05; letter-spacing: -1.5px;
+  }
+  h1 .hl {
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .sub {
+    font-size: clamp(16px, 2.2vw, 21px); color: var(--muted);
+    max-width: 640px; margin: 24px 0 36px;
+  }
+  .verdicts { display: flex; gap: 14px; flex-wrap: wrap; }
+  .pill {
+    font-family: var(--mono); font-weight: 700; font-size: 14px;
+    padding: 10px 22px; border-radius: 10px; border: 1px solid;
+  }
+  .pill.approve { color: var(--green); border-color: rgba(52,211,153,.4); background: rgba(52,211,153,.08); }
+  .pill.escalate { color: var(--amber); border-color: rgba(251,191,36,.4); background: rgba(251,191,36,.08); }
+  .pill.block { color: var(--red); border-color: rgba(248,113,113,.4); background: rgba(248,113,113,.08); }
+
+  /* ---------- sections ---------- */
+  section { padding: 90px 0; }
+  .kicker { font-family: var(--mono); font-size: 13px; color: var(--green); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 750; letter-spacing: -0.5px; margin-bottom: 18px; }
+  .lead { color: var(--muted); font-size: 17px; max-width: 720px; }
+
+  /* ---------- flow ---------- */
+  .flow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 40px 0; }
+  .node {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; font-family: var(--mono); font-size: 13.5px; flex: 1 1 150px;
+    min-width: 150px; text-align: center;
+  }
+  .node b { display: block; font-size: 14.5px; margin-bottom: 4px; }
+  .node span { color: var(--muted); font-size: 12px; font-family: inherit; }
+  .arrow { color: var(--green); font-family: var(--mono); font-size: 18px; flex: 0 0 auto; }
+  @media (max-width: 720px) { .arrow { transform: rotate(90deg); } .flow { flex-direction: column; align-items: stretch; } }
+
+  /* ---------- cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 28px; transition: transform .25s, border-color .25s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: #2e4258; }
+  .card .icon { font-size: 26px; margin-bottom: 14px; }
+  .card h3 { font-size: 19px; margin-bottom: 10px; }
+  .card p { color: var(--muted); font-size: 14.5px; }
+  .card .tag {
+    display: inline-block; font-family: var(--mono); font-size: 11px; color: var(--blue);
+    border: 1px solid rgba(96,165,250,.35); border-radius: 999px; padding: 2px 10px; margin-bottom: 12px;
+  }
+
+  /* ---------- integrations ---------- */
+  .integ { border-left: 3px solid var(--line); padding: 6px 0 6px 28px; margin: 36px 0; }
+  .integ.ezio { border-color: var(--purple); }
+  .integ.hr { border-color: var(--blue); }
+  .integ.tr { border-color: var(--green); }
+  .integ h3 { font-size: 22px; margin-bottom: 8px; }
+  .integ h3 small { font-family: var(--mono); font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 10px; }
+  .integ p { color: var(--muted); font-size: 15.5px; max-width: 760px; }
+  .integ code, pre code {
+    font-family: var(--mono); font-size: 13px;
+    background: #0c1420; border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px;
+    color: var(--green);
+  }
+
+  /* ---------- code block ---------- */
+  pre {
+    background: #0c1420; border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px 28px; margin: 34px 0; overflow-x: auto;
+    font-family: var(--mono); font-size: 13.5px; line-height: 1.7;
+  }
+  .c-kw { color: var(--purple); }
+  .c-str { color: var(--green); }
+  .c-com { color: #5b6b80; }
+  .c-fn { color: var(--blue); }
+
+  /* ---------- principles ---------- */
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 18px; margin-top: 36px; }
+  .prin {
+    border: 1px solid var(--line); border-radius: 14px; padding: 22px;
+    background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+  }
+  .prin .n { font-family: var(--mono); color: var(--green); font-size: 13px; margin-bottom: 8px; }
+  .prin h4 { font-size: 16px; margin-bottom: 6px; }
+  .prin p { color: var(--muted); font-size: 13.5px; }
+
+  /* ---------- stats ---------- */
+  .stats { display: flex; flex-wrap: wrap; gap: 40px; margin-top: 40px; }
+  .stat .num { font-family: var(--mono); font-size: 40px; font-weight: 700; color: var(--green); }
+  .stat .lbl { color: var(--muted); font-size: 14px; }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--line); padding: 50px 0 70px;
+    color: var(--muted); font-size: 14px; text-align: center;
+  }
+  footer .mono { font-family: var(--mono); color: var(--green); }
+  .alt { background: var(--bg2); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Trust<span class="gate">Gate</span></div>
+    <div>
+      <a href="#how">How it works</a>
+      <a href="#integrations">Integrations</a>
+      <a href="#gate">Push gate</a>
+      <a href="#stack">Stack</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <span class="badge">Decision-Grade AI · Hackathon Build</span>
+    <h1>The gate between<br><span class="hl">"the AI said so"</span><br>and "it shipped."</h1>
+    <p class="sub">
+      TrustGate is an evidence-driven security review system for VS Code-compatible IDEs.
+      The model advises — a deterministic policy decides. Every claim is re-verified
+      against real evidence before anything is approved, escalated, or blocked.
+    </p>
+    <div class="verdicts">
+      <span class="pill approve">✓ APPROVE</span>
+      <span class="pill escalate">⚠ ESCALATE</span>
+      <span class="pill block">✕ BLOCK</span>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <h2>Model advises. Policy decides.<br>Evidence is re-verified.</h2>
+    <p class="lead">
+      An LLM's confidence is not evidence. TrustGate treats all model output as untrusted:
+      every extracted claim must quote the source text verbatim, every verdict is bound to
+      the exact bytes of the diff it authorizes, and every unknown fails closed.
+    </p>
+
+    <div class="flow">
+      <div class="node"><b>Input</b><span>Git diff or Ezio report</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Analyze</b><span>HarnessRouter harness</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Ground</b><span>quote re-verification</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Decide</b><span>deterministic policy</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><b>Enforce</b><span>Git pre-push gate</span></div>
+    </div>
+
+    <pre><span class="c-com"># the policy evaluates evidence — never model confidence</span>
+<span class="c-kw">if</span> (criticalContradicted || criticalFinding) <span class="c-kw">return</span> <span class="c-str">"BLOCK"</span>;
+<span class="c-kw">if</span> (!allQuotesGroundedInSource || weakCoverage) <span class="c-kw">return</span> <span class="c-str">"FAIL_CLOSED"</span>;
+<span class="c-kw">if</span> (unsupportedMaterialClaim || lowScores) <span class="c-kw">return</span> <span class="c-str">"ESCALATE"</span>;
+<span class="c-kw">return</span> <span class="c-str">"APPROVE"</span>;  <span class="c-com">// bound to SHA-256(repo | base | head | diff), expires in 15 min</span></pre>
+
+    <div class="principles">
+      <div class="prin"><div class="n">01</div><h4>Fail closed</h4><p>Missing, stale, failed, or unverifiable results deny by default. NOT VERIFIED never grants permission.</p></div>
+      <div class="prin"><div class="n">02</div><h4>Exact-content binding</h4><p>An approval fingerprints repo, base, head, and the exact diff. A different change needs a new review.</p></div>
+      <div class="prin"><div class="n">03</div><h4>Role separation</h4><p>Developers submit; reviewers resolve. Reviewer approval is risk acceptance — it never inflates the evidence score.</p></div>
+      <div class="prin"><div class="n">04</div><h4>No self-attestation</h4><p>Hard blocks can't be overridden. Synthetic demos are labeled and can never authorize a push.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="integrations" class="alt">
+  <div class="wrap">
+    <div class="kicker">Integrations</div>
+    <h2>Built on the challenge stack</h2>
+    <p class="lead">Three layers, one job: turn AI output into a decision you can defend.</p>
+
+    <div class="integ ezio">
+      <h3>Ezio <small>the input — reports under review</small></h3>
+      <p>
+        Ezio (<code>ezioai.io</code>) generates the research reports TrustGate judges. Reports are exported
+        as PDF or text and imported through the extension (<code>pypdf</code> extracts PDF text locally)
+        or pasted into the dashboard. The user states <em>who relies on the answer and for what</em> — that
+        context determines which claims are material. Because Ezio exposes no authenticated verification
+        API, provenance is explicit: imported reports are labeled user-supplied, and a report approval
+        authorizes only that stated use — never an unrelated code push.
+      </p>
+    </div>
+
+    <div class="integ hr">
+      <h3>HarnessRouter <small>the analyzer — advisory only</small></h3>
+      <p>
+        HarnessRouter runs the LLM analysis through a configured review harness at
+        <code>api.harnessrouter.ai/{harness_id}/v1/responses</code> (or Community Edition via
+        <code>HR_MODE=ce</code>). The prompt instructs a read-only harness to treat input as untrusted
+        data and return strict JSON: 0–5 scores for accuracy, bias, tone and agreement; claims with
+        verdicts, verbatim quotes and real sources; findings with severity; and a coverage flag.
+        Output is then re-validated quote-by-quote against the source — the harness advises,
+        the policy decides.
+      </p>
+    </div>
+
+    <div class="integ tr">
+      <h3>TokenRouter <small>the routing &amp; credential layer</small></h3>
+      <p>
+        Every request moves through a token-routed boundary. Provider calls carry
+        <code>HR_API_KEY</code> bearer auth and a per-request <code>Idempotency-Key</code> through a single
+        configurable endpoint (<code>HR_BASE_URL</code>) — credentials stay server-side and never reach the
+        extension or dashboard. On the user side, separate developer and reviewer tokens route to
+        different roles and permissions: developers create reviews; only reviewers can resolve
+        escalations — with a written reason, inside a 15-minute window.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="gate">
+  <div class="wrap">
+    <div class="kicker">Enforcement</div>
+    <h2>A gate that actually gates</h2>
+    <p class="lead">
+      Most trust tools build dashboards that report risk. TrustGate ships a Git <code style="font-family:var(--mono);color:var(--green)">pre-push</code>
+      hook that stops it: every ref update recomputes the approval fingerprint server-side,
+      and anything stale, changed, or unreviewed is denied.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🔏</div>
+        <h3>Byte-exact approvals</h3>
+        <p>SHA-256 over repo identity, base, head, scope, and the exact diff. Approve one change — it can never authorize a different one.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⏱</div>
+        <h3>15-minute expiry</h3>
+        <p>Approvals decay fast. Push late and the gate re-checks — new evidence always requires a new review.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚫</div>
+        <h3>Deny by default</h3>
+        <p>Tags, deletes, missing objects, backend failures, malformed responses — all denied in v1. Multi-ref pushes need per-ref approvals.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧭</div>
+        <h3>Honest limits</h3>
+        <p>A local hook is bypassable by its owner — documented as a local guard, with org-level protected-branch checks as the rollout target.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="num">0</div><div class="lbl">npm dependencies</div></div>
+      <div class="stat"><div class="num">28</div><div class="lbl">passing integration tests</div></div>
+      <div class="stat"><div class="num">4</div><div class="lbl">surfaces: extension, dashboard, CLI, policy</div></div>
+      <div class="stat"><div class="num">15<span style="font-size:22px">min</span></div><div class="lbl">approval expiry</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="stack" class="alt">
+  <div class="wrap">
+    <div class="kicker">Under the hood</div>
+    <h2>Zero dependencies. Everything auditable.</h2>
+    <p class="lead">
+      The entire backend is Node&nbsp;24 built-ins — <code style="font-family:var(--mono);color:var(--green)">node:http</code> for the
+      authenticated API and <code style="font-family:var(--mono);color:var(--green)">node:sqlite</code> (WAL, foreign keys) for the durable
+      review queue and audit trail. No <code style="font-family:var(--mono);color:var(--green)">npm install</code>, no supply chain.
+    </p>
+    <div class="grid">
+      <div class="card"><span class="tag">editor</span><h3>VSIX extension</h3><p>One editor-neutral package on the stable VS Code API — installs in VS Code, Cursor, Windsurf. Nonce-CSP webview, token in SecretStorage.</p></div>
+      <div class="card"><span class="tag">dashboard</span><h3>Browser console</h3><p>Same-origin only, tokens in tab memory, evidence inspector plus reviewer resolution — no editor required.</p></div>
+      <div class="card"><span class="tag">cli</span><h3>Git pre-push gate</h3><p>Reads every ref update from stdin, recomputes fingerprints, fails closed. Hook installer refuses to clobber existing hooks.</p></div>
+      <div class="card"><span class="tag">engine</span><h3>Deterministic policy</h3><p>Quote-grounded evidence validation, verdict mapping, expiry and role checks — the same code path for reports and code.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">TrustGate — Decision-Grade AI</p>
+    <p>Evidence in. Verdict out. Nothing ships on confidence alone.</p>
+  </div>
+</footer>
+
+</body>
+</html>
