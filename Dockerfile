@@ -3,6 +3,7 @@ ENV NODE_ENV=production HOST=0.0.0.0 PORT=4318 TRUSTGATE_DB=/data/trustgate.sqli
 WORKDIR /app
 COPY --chown=node:node package.json ./
 COPY --chown=node:node src ./src
+COPY --chown=node:node dashboard ./dashboard
 RUN mkdir /data && chown node:node /data
 USER node
 EXPOSE 4318

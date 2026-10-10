@@ -4,7 +4,8 @@ Date: 2026-10-10. Host: macOS arm64, Node 24.1.0, Python 3.13.5, pypdf 6.12.2, C
 
 ## Passed
 
-- `npm test`: **24 tests passed**, none failed or skipped. Uses actual HTTP handlers and SQLite with an in-process request transport. Provider responses are explicitly mocked; these are not live provider tests.
+- `npm test`: **28 tests passed**, none failed or skipped, including four standalone-dashboard route/authentication tests. Uses actual HTTP handlers and SQLite with an in-process request transport. Provider responses are explicitly mocked; these are not live provider tests.
+- Standalone dashboard JavaScript syntax and HTML element references checked. Static assets, same-origin bearer access, foreign-origin rejection, history summaries, reviewer authorization and synthetic-fixture access passed handler tests. Browser visual/interaction QA remains unverified under the previously observed runtime restrictions.
 - Real temporary Git repositories: committed vs working-tree snapshots, fingerprint changes and multi-ref push rejection.
 - Evidence policy: support, contradiction, uncertainty, source dates, coverage, score handling, quote grounding, critical findings and code/report separation.
 - API/database: authentication, reviewer role, reasoned resolution, replay denial, expiry, new-review invalidation, failed providers, audit records, restart recovery, transaction rollback and synthetic-mode isolation.

@@ -3,6 +3,7 @@ const http = require('node:http');
 const {randomUUID,timingSafeEqual,createHash} = require('node:crypto');
 const {openStore} = require('./store');
 const {analyze} = require('./provider');
+const {serveDashboard,permittedOrigin} = require('./dashboard');
 const {text,requireValue,validateSnapshot,validateEvidence,fingerprint,decide,scan} = require('./policy');
 function configuration(env=process.env) {
   const c = {host:env.HOST||'127.0.0.1',port:Number(env.PORT||4318),db:env.TRUSTGATE_DB||'./data/trustgate.sqlite',token:env.TRUSTGATE_TOKEN,reviewerToken:env.TRUSTGATE_REVIEWER_TOKEN,reviewerId:env.TRUSTGATE_REVIEWER_ID||'security-reviewer',hrKey:env.HR_API_KEY,harness:env.HR_HARNESS_ID,hrBase:env.HR_BASE_URL||'https://api.harnessrouter.ai',hrMode:env.HR_MODE||'cloud',demo:env.TRUSTGATE_ALLOW_DEMO==='true',production:env.NODE_ENV==='production'};
@@ -40,13 +41,23 @@ async function createApp(config, provider=analyze) {
     const send=(status,data)=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store','x-content-type-options':'nosniff','x-request-id':requestId});res.end(JSON.stringify(data));};
     try{
       const url=new URL(req.url,'http://localhost');
+      if(serveDashboard(req,res,url.pathname))return;
       if(req.method==='GET' && url.pathname==='/healthz')return send(200,{status:'ok'});
       if(req.method==='GET' && url.pathname==='/readyz')return send(stopping?503:200,{status:stopping?'stopping':'ready',verificationMode:'Ezio report import; automated Ezio API not configured'});
-      requireValue(!req.headers.origin, 'Browser origins are not accepted; use the authenticated extension or CLI');
+      if(!permittedOrigin(req.headers.origin,config))return send(403,{error:'Browser origin is not permitted'});
       const auth=req.headers.authorization||''; const key=auth.startsWith('Bearer ')?auth.slice(7):'';
       const reviewer=equal(key,config.reviewerToken); if(!reviewer && !equal(key,config.token))return send(401,{error:'Unauthorized'});
       const actor=reviewer?config.reviewerId:'developer';
       const now=Date.now(); const bucket=rate.get(actor)||{at:now,n:0};if(now-bucket.at>60000){bucket.at=now;bucket.n=0;}bucket.n++;rate.set(actor,bucket);if(bucket.n>240)return send(429,{error:'Rate limit exceeded'});
+      if(req.method==='GET' && url.pathname==='/v1/session')return send(200,{role:reviewer?'reviewer':'developer',actor,demoEnabled:!!config.demo&&!config.production,harnessConfigured:!!config.hrKey&&!!config.harness,verificationMode:'Ezio report import'});
+      if(req.method==='GET' && url.pathname==='/v1/reviews'){
+        const rows=store.db.prepare('SELECT id FROM reviews ORDER BY created DESC,rowid DESC LIMIT 50').all();
+        return send(200,{reviews:rows.map(({id})=>{const r=publicReview(store.get(id));delete r.snapshot;if(r.result)r.result={decision:r.result.decision,error:r.result.error,providerError:r.result.providerError};return r;}),limit:50});
+      }
+      if(req.method==='GET' && url.pathname==='/v1/demo-fixtures'){
+        if(!config.demo||config.production)return send(404,{error:'Synthetic demo mode disabled'});
+        return send(200,{fixtures:['nuclear-energy','work-from-home','ev-market','agi-timelines'].map(name=>require('../fixtures/'+name+'.json'))});
+      }
       let body={};
       if(req.method==='POST'){
         if(!String(req.headers['content-type']).startsWith('application/json'))return send(415,{error:'Expected application/json'});

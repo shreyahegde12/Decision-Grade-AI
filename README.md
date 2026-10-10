@@ -17,6 +17,10 @@ npm run package:extension
 npm start
 ```
 
+**Browser dashboard:** after `npm start`, open **http://127.0.0.1:4318/**. Connect using `TRUSTGATE_TOKEN` from your private `.env`. No Cursor extension is required for the dashboard. It shows the latest 50 reviews, refreshes every 10 seconds, and lets you inspect evidence, submit text-based Ezio reports, and run clearly labeled synthetic demos. Use the reviewer token only when recording reviewer decisions. Tokens stay in tab memory and are forgotten on reload/disconnect.
+
+For PDF import directly from a file, use the Cursor extension; the dashboard accepts pasted report text or `.txt`/`.md` exports. Live report analysis requires HarnessRouter configuration. Browser access is restricted to the local service origin (`127.0.0.1` or `localhost` at the configured port); no CORS access is enabled for other websites.
+
 Setup creates a private, gitignored `.env`, with separate random developer and reviewer tokens. It never prints them or overwrites an existing file. Configure `HR_API_KEY` and `HR_HARNESS_ID` in that file to enable live agent analysis. Use a configured read-only review harness with execution and network tools disabled: the agent only needs to return JSON from supplied text. Cloud defaults to `https://api.harnessrouter.ai/{harness_id}/v1/responses`. For Community Edition, set `HR_MODE=ce` and its API base URL.
 
 In Cursor:
@@ -82,6 +86,7 @@ Tests cover evidence grounding, all decision branches, role separation, exact-co
 | Path | Responsibility |
 |---|---|
 | `extension/` | Cursor sidebar, status, scheduling and import |
+| `dashboard/` | Standalone browser dashboard, history and evidence inspector |
 | `src/server.js`, `src/store.js` | Authenticated API, worker queue and SQLite audit |
 | `src/policy.js` | Evidence validation and deterministic decisions |
 | `src/provider.js` | HarnessRouter cloud/CE adapter |

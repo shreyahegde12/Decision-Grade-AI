@@ -35,6 +35,8 @@ Default check interval: 180 seconds, configurable to 300. Run only for changed s
 
 ## Backend and persistence
 
+The local browser dashboard is served at `/` by the same service. It uses bearer authentication with tokens held only in tab memory, never browser storage. It reads the latest 50 review summaries, loads detailed evidence on selection, imports report text, and submits reviewer actions through the same role checks. Local same-origin browser requests are allowed; foreign origins are rejected. CSP blocks inline/external scripts and framing. Dashboard-only use does not require Cursor; Git access and editor scans still use the extension or CLI.
+
 Node 24 HTTP service with built-in SQLite (WAL, foreign keys, busy timeout), one process and bounded background concurrency. Authenticated JSON API with strict payload validation, bounded bodies, rate limits, provider timeouts, sanitized errors, and request IDs. SQLite stores jobs, immutable original decisions, reviewer events, and exact subject bindings. Restart marks interrupted work failed; no stale approval is inferred. Pending jobs resume. GET polling supplies progress. Health and readiness are distinct.
 
 Single-organization roles: developer can create/read reviews; reviewer additionally resolves escalations. Provision separate bearer credentials from environment, compare safely, never log them. Reviewer identity is configured server-side. Production requires distinct strong tokens, TLS termination, persistent private storage, backups, restricted network access, and a configured HarnessRouter harness. Horizontal scaling and enterprise SSO are future migrations, not claims about this release.
@@ -71,6 +73,10 @@ A client hook can be bypassed by its owner; it is a local guard, not organizatio
 ## API
 
 - GET /healthz, /readyz: operational status, no secrets.
+- GET /: local dashboard; `/dashboard/app.js` and `/dashboard/styles.css` are explicitly allowlisted assets.
+- GET /v1/session: authenticated role and integration capabilities, no secrets.
+- GET /v1/reviews: authenticated latest 50 review summaries, excluding raw diffs.
+- GET /v1/demo-fixtures: authenticated, explicitly synthetic fixtures in local demo mode only.
 - POST /v1/reviews: code snapshot or report text with decision context; returns 202 + job ID.
 - GET /v1/reviews/:id: job, evidence, reasons, effective action.
 - POST /v1/reviews/:id/resolve: reviewer-only approval/rejection with reason.
