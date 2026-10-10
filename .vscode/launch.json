@@ -1,7 +1,7 @@
 {
   "version":"0.2.0",
   "configurations":[{
-    "name":"Run TrustGate in Cursor Extension Host",
+    "name":"Run TrustGate in Extension Development Host",
     "type":"extensionHost",
     "request":"launch",
     "args":["--extensionDevelopmentPath=${workspaceFolder}/extension"]

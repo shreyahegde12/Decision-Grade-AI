@@ -84,7 +84,7 @@
     }
     $('empty-state').hidden = filtered.length > 0;
     $('empty-state').querySelector('h3').textContent = reviews.length ? 'No matching reviews' : 'No reviews yet';
-    $('empty-state').querySelector('p').textContent = reviews.length ? 'Try a different search or decision filter.' : session ? 'Import a report, try a synthetic example, or run a code check from Cursor.' : 'Connect to your local service, then import a report or run a code check from Cursor.';
+    $('empty-state').querySelector('p').textContent = reviews.length ? 'Try a different search or decision filter.' : session ? 'Import a report, try a synthetic example, or run a code check from your editor.' : 'Connect to your local service, then import a report or run a code check from your editor.';
     $('review-count').textContent = filtered.length + (filtered.length === 1 ? ' review shown' : ' reviews shown');
   }
   function renderDetail(force = false) {

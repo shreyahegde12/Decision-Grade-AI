@@ -1,5 +1,6 @@
 {
-  "name":"trustgate", "displayName":"TrustGate", "description":"Evidence-based security review and push decisions for Cursor", "version":"0.1.0", "publisher":"trustgate-local", "license":"MIT",
+  "name":"trustgate", "displayName":"TrustGate", "description":"Evidence-based security review and push decisions for VS Code-compatible editors", "version":"0.2.0", "publisher":"trustgate-local", "license":"MIT",
+  "extensionKind":["workspace"],
   "engines":{"vscode":"^1.93.0"}, "categories":["Other"], "main":"./extension.js",
   "activationEvents":["onStartupFinished"],
   "capabilities":{"untrustedWorkspaces":{"supported":false},"virtualWorkspaces":false},
@@ -16,6 +17,7 @@
     "views":{"trustgate":[{"id":"trustgate.review","name":"Security Review","type":"webview"}]},
     "configuration":{"title":"TrustGate","properties":{
       "trustgate.backendUrl":{"type":"string","default":"http://127.0.0.1:4318","scope":"machine","description":"TrustGate service URL. Remote servers require HTTPS."},
+      "trustgate.pythonPath":{"type":"string","default":"","scope":"machine","description":"Python 3 executable for PDF import. Empty uses python on Windows and python3 elsewhere. Install pypdf in that interpreter."},
       "trustgate.intervalSeconds":{"type":"number","enum":[180,300],"default":180,"description":"Background scan interval."},
       "trustgate.autoCheck":{"type":"boolean","default":false,"description":"Enable background checks of saved tracked changes. Sends diffs to your configured service."}
     }}

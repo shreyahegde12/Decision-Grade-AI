@@ -15,5 +15,5 @@ jobs:
       - run: npm run package:extension
       - uses: actions/upload-artifact@v4
         with:
-          name: trustgate-cursor
+          name: trustgate-extension
           path: dist/*.vsix

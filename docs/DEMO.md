@@ -2,7 +2,7 @@
 
 Prerequisites: local service running; real HarnessRouter configured; two real Ezio PDF exports generated from different official samples. Synthetic fixtures are useful for rehearsing only; they do not satisfy the challenge.
 
-1. **0–15 seconds:** Show Cursor and explain the relying person and action: “A developer needs a defensible decision before shipping AI-assisted work. TrustGate converts verification evidence into approve, escalate or block.”
+1. **0–15 seconds:** Show your editor and explain the relying person and action: “A developer needs a defensible decision before shipping AI-assisted work. TrustGate converts verification evidence into approve, escalate or block.”
 2. **15–45 seconds:** Import the main real report. State the actual decision context. Expand the evidence: point to a specific unsupported or contradicted material claim, source type/date, and resulting action. Explain a coverage gap instead of relying on the headline score.
 3. **45–65 seconds:** If the action is ESCALATE, demonstrate an accountable reviewer inspecting the evidence and recording a reason. If BLOCK, explain the required correction; do not override it for the demo.
 4. **65–90 seconds:** Import a different official sample with an appropriate decision context. Show the new evidence trail and resulting action. Do not hard-code a different result; let actual evidence determine it.

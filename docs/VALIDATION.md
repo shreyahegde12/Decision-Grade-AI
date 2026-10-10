@@ -4,6 +4,8 @@ Date: 2026-10-10. Host: macOS arm64, Node 24.1.0, Python 3.13.5, pypdf 6.12.2, C
 
 ## Passed
 
+- Editor-neutral release 0.2.0: manifest and VSIX versions agree, stable VS Code API target and workspace-host placement checked, and required runtime modules are bundled. The rebuilt `dist/trustgate-0.2.0.vsix` installed successfully through both Cursor and Windsurf CLIs in isolated profiles. No normal user profile was changed. VS Code itself was not installed on this host, and cross-editor activation/end-to-end behavior remains unverified.
+
 - `npm test`: **28 tests passed**, none failed or skipped, including four standalone-dashboard route/authentication tests. Uses actual HTTP handlers and SQLite with an in-process request transport. Provider responses are explicitly mocked; these are not live provider tests.
 - Standalone dashboard JavaScript syntax and HTML element references checked. Static assets, same-origin bearer access, foreign-origin rejection, history summaries, reviewer authorization and synthetic-fixture access passed handler tests. Browser visual/interaction QA remains unverified under the previously observed runtime restrictions.
 - Real temporary Git repositories: committed vs working-tree snapshots, fingerprint changes and multi-ref push rejection.
@@ -28,7 +30,7 @@ Date: 2026-10-10. Host: macOS arm64, Node 24.1.0, Python 3.13.5, pypdf 6.12.2, C
 
 1. Configure HarnessRouter key and harness ID locally in `.env`.
 2. Run `npm start`, then `npm run test:http` in another terminal.
-3. Install the VSIX in normal Cursor, configure its API token, and open a Git repository with an origin remote.
+3. Install the VSIX in your target VS Code-compatible editor, configure its API token, and open a Git repository with an origin remote.
 4. Import two genuine reports from different official Ezio samples and inspect grounded claim/source reasoning.
 5. Review a commit range, resolve an escalation with the reviewer credential, and verify the gate accepts that range but rejects a changed range.
 6. Visually inspect the sidebar, then record the 1–2 minute demonstration.

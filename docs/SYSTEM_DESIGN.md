@@ -1,6 +1,6 @@
 # TrustGate: end-to-end system design
 
-Status: implementation specification, 2026-10-10. Target: Cursor desktop, single organization deployment. This document distinguishes the implemented local service from the remaining live-provider and hosted rollout work.
+Status: implementation specification, 2026-10-10. Target: VS Code-compatible desktop editors, single organization deployment. This document distinguishes the implemented local service from the remaining live-provider and hosted rollout work.
 
 ## Product and actors
 
@@ -12,7 +12,7 @@ The hackathon report workflow is independent of code approval: a user imports an
 
 ```mermaid
 flowchart LR
-  C[Cursor extension\nstatus + sidebar] -->|Bearer token; HTTPS remotely| A[Node API]
+  C[Editor extension\nstatus + sidebar] -->|Bearer token; HTTPS remotely| A[Node API]
   G[Git pre-push CLI] -->|exact Git range fingerprint| A
   A --> Q[SQLite durable review queue]
   Q --> W[Bounded worker]
@@ -27,15 +27,15 @@ flowchart LR
   A --> DB
 ```
 
-## Frontend: Cursor extension
+## Frontend: editor extension
 
-Use the VS Code extension API supported by Cursor. A status item opens a webview sidebar. It shows trust level, decision reasons, scope, evidence, coverage, provenance, timestamps, and next steps. Buttons run checks, import reports, and submit reviewer decisions. Webview uses a nonce CSP, textContent, no external scripts, and no credentials. API token is in editor SecretStorage, backend URL is a machine-scoped setting. No provider keys in the extension.
+Use only stable VS Code extension APIs, with no Cursor-specific dependencies. Declare a workspace extension host so Git and PDF reads happen alongside repository files. A status item opens a webview sidebar. It shows trust level, decision reasons, scope, evidence, coverage, provenance, timestamps, and next steps. Buttons run checks, import reports, and submit reviewer decisions. Webview uses a nonce CSP, textContent, no external scripts, and no credentials. API token is in editor SecretStorage, backend URL is a machine-scoped setting. No provider keys in the extension.
 
 Default check interval: 180 seconds, configurable to 300. Run only for changed snapshots; serialize requests. Text changes immediately mark the result stale. Saved tracked working changes are preview checks; unsaved and untracked files are explicitly outside that snapshot. A separate committed-range check is required for push approval. First version supports one selected workspace folder and origin remote; unsupported cases fail visibly.
 
 ## Backend and persistence
 
-The local browser dashboard is served at `/` by the same service. It uses bearer authentication with tokens held only in tab memory, never browser storage. It reads the latest 50 review summaries, loads detailed evidence on selection, imports report text, and submits reviewer actions through the same role checks. Local same-origin browser requests are allowed; foreign origins are rejected. CSP blocks inline/external scripts and framing. Dashboard-only use does not require Cursor; Git access and editor scans still use the extension or CLI.
+The local browser dashboard is served at `/` by the same service. It uses bearer authentication with tokens held only in tab memory, never browser storage. It reads the latest 50 review summaries, loads detailed evidence on selection, imports report text, and submits reviewer actions through the same role checks. Local same-origin browser requests are allowed; foreign origins are rejected. CSP blocks inline/external scripts and framing. Dashboard-only use does not require an editor extension; Git access and editor scans still use the extension or CLI.
 
 Node 24 HTTP service with built-in SQLite (WAL, foreign keys, busy timeout), one process and bounded background concurrency. Authenticated JSON API with strict payload validation, bounded bodies, rate limits, provider timeouts, sanitized errors, and request IDs. SQLite stores jobs, immutable original decisions, reviewer events, and exact subject bindings. Restart marks interrupted work failed; no stale approval is inferred. Pending jobs resume. GET polling supplies progress. Health and readiness are distinct.
 
@@ -87,7 +87,7 @@ PDF extraction happens locally with Python and pypdf before submission. Backend 
 
 ## Deployment and validation
 
-Deliver a self-contained Node service, Cursor VSIX, CLI, Dockerfile/Compose, environment example, tests, and operations runbook. Local run exercises real HTTP, SQLite, auth/roles, worker lifecycle, decision branches, stale binding, exact Git ranges, multi-ref rejection, and provider failures. Provider tests use explicitly labeled mock HTTP services until live keys exist. Test report fixtures must never masquerade as the four real reports. Production launch requires actual Ezio reports, live HarnessRouter run, Cursor host smoke test, TLS/host configuration, backup restore drill, and a protected GitHub enforcement check.
+Deliver a self-contained Node service, editor-neutral VSIX, CLI, Dockerfile/Compose, environment example, tests, and operations runbook. Local run exercises real HTTP, SQLite, auth/roles, worker lifecycle, decision branches, stale binding, exact Git ranges, multi-ref rejection, and provider failures. Provider tests use explicitly labeled mock HTTP services until live keys exist. Test report fixtures must never masquerade as the four real reports. Production launch requires actual Ezio reports, live HarnessRouter run, target-editor host smoke test, TLS/host configuration, backup restore drill, and a protected GitHub enforcement check.
 
 ## References
 

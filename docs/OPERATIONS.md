@@ -2,7 +2,7 @@
 
 ## Start and configure
 
-Run `npm run setup`, configure optional HarnessRouter credentials in `.env`, then `npm start`. The service binds only to 127.0.0.1:4318. Copy the developer token into Cursor's **TrustGate: Set API Token** password field. Keep reviewer credentials separate. Never paste provider keys into chat or the webview. Keys are loaded once at startup; restart after rotation.
+Run `npm run setup`, configure optional HarnessRouter credentials in `.env`, then `npm start`. The service binds only to 127.0.0.1:4318. Copy the developer token into Your editor’s **TrustGate: Set API Token** password field. Keep reviewer credentials separate. Never paste provider keys into chat or the webview. Keys are loaded once at startup; restart after rotation.
 
 `GET /healthz` checks process liveness. `GET /readyz` checks whether the service accepts work and explicitly declares the manual Ezio integration mode. It does not claim provider availability. Review failures are persisted and shown to the user.
 

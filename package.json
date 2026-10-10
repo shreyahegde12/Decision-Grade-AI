@@ -1,6 +1,6 @@
 {
-  "name": "trustgate", "version": "0.1.0", "private": true,
-  "description": "Evidence-driven release decisions for Cursor",
+  "name": "trustgate", "version": "0.2.0", "private": true,
+  "description": "Evidence-driven release decisions for VS Code-compatible editors and the command line",
   "engines": {"node": ">=24.0.0"},
   "scripts": {"start": "node --env-file=.env src/server.js", "setup": "node scripts/setup.js", "test": "node --test test/*.test.js", "test:http": "TRUSTGATE_TEST_HTTP=1 node --test test/*.test.js", "package:extension": "python3 scripts/package_extension.py", "demo": "node scripts/demo.js"}
 }
