@@ -1,6 +1,6 @@
 # TrustGate for VS Code-compatible editors
 
-One VSIX, using stable VS Code APIs (`^1.93.0`) and a Node workspace extension host. Install through **Extensions: Install from VSIX…** in VS Code, Cursor, or another compatible desktop editor. No editor-specific account or AI subscription is required by TrustGate. The backend has its own provider configuration.
+One VSIX, using stable VS Code APIs (`^1.93.0`) and a Node workspace extension host. Install through **Extensions: Install from VSIX…** in VS Code or another compatible desktop editor. No editor-specific account or AI subscription is required by TrustGate. The backend has its own provider configuration.
 
 Open the TrustGate shield in the activity bar. Configure your backend token through **TrustGate: Set API Token**. Use **Review commit range** for push decisions, **Check saved changes** for previews, and **Import Ezio report** for evidence-driven report decisions.
 

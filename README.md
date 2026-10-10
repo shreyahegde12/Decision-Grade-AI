@@ -31,7 +31,7 @@ For PDF import directly from a file, use the editor extension; the dashboard acc
 
 Setup creates a private, gitignored `.env`, with separate random developer and reviewer tokens. It never prints them or overwrites an existing file. Configure `HR_API_KEY` and `HR_HARNESS_ID` in that file to enable live agent analysis. Use a configured read-only review harness with execution and network tools disabled: the agent only needs to return JSON from supplied text. Cloud defaults to `https://api.harnessrouter.ai/{harness_id}/v1/responses`. For Community Edition, set `HR_MODE=ce` and its API base URL.
 
-In VS Code, Cursor, or another compatible desktop editor:
+In VS Code or another compatible desktop editor:
 
 1. Extensions → **Install from VSIX…** → `dist/trustgate-0.2.0.vsix`.
 2. Open a Git repository with an `origin` remote.

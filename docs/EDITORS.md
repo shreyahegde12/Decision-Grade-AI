@@ -23,7 +23,6 @@ Use the corresponding executable in other compatible editors. Credentials are st
 | Environment | Support boundary |
 |---|---|
 | VS Code desktop | Targets stable API 1.93+; host smoke test still required on the installed version. |
-| Cursor desktop | Uses the same VSIX; package installation tested, live host workflow not confirmed. |
 | Windsurf desktop | Version 0.2.0 installed successfully in an isolated profile; live host workflow not confirmed. |
 | Other VS Code-compatible desktop editors | Same package if stable API 1.93+ and Node workspace hosts are supported; not individually certified. |
 | Remote SSH / container workspace | Workspace-host placement declared; run Git/Python there and configure a reachable backend. Not yet runtime-tested. |
