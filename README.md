@@ -1,5 +1,7 @@
 # TrustGate
 
+Start here: **[quickstart.md](quickstart.md)**. For test results and verification limits, see **[docs/VALIDATION.md](docs/VALIDATION.md)**.
+
 An evidence-driven security review extension for **VS Code-compatible desktop editors**. It maps low trust to BLOCK, medium trust to ESCALATE, and high trust to APPROVE. An exact-content Git gate prevents an old approval from authorizing a different change.
 
 **Current status:** implemented local MVP with production-oriented boundaries, not a certified security scanner or a completed production rollout. Ezio integration is PDF/text report import. HarnessRouter uses its documented live API when configured. No Ezio API endpoint has been invented. Synthetic examples are clearly labeled and cannot authorize code pushes.

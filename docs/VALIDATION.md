@@ -12,13 +12,13 @@ Date: 2026-10-10. Host: macOS arm64, Node 24.1.0, Python 3.13.5, pypdf 6.12.2, C
 - Evidence policy: support, contradiction, uncertainty, source dates, coverage, score handling, quote grounding, critical findings and code/report separation.
 - API/database: authentication, reviewer role, reasoned resolution, replay denial, expiry, new-review invalidation, failed providers, audit records, restart recovery, transaction rollback and synthetic-mode isolation.
 - `npm run demo`: four **synthetic** topic fixtures produce evidence-driven block/escalate/approve branches. These are not official Ezio exports and do not establish hackathon completion.
-- `npm run package:extension`: generated `dist/trustgate-0.1.0.vsix`.
+- `npm run package:extension`: generated the original `dist/trustgate-0.1.0.vsix`, subsequently rebuilt as `dist/trustgate-0.2.0.vsix` for the editor-neutral release.
 - Cursor CLI installed the VSIX successfully into an isolated local test profile under `data/`. The user's normal Cursor profile was not changed.
 - Extension JavaScript syntax checked. Python/pypdf dependency is present; no real Ezio PDF has been supplied for extraction verification.
 
 ## Blocked or not verified
 
-- `npm start` and socket-based tests: sandbox denies binding `127.0.0.1` with `EPERM`. No HTTP server is currently running. Run `npm start` and `npm run test:http` in a normal local terminal.
+- `npm start` and socket-based tests: the agent sandbox denied binding `127.0.0.1` with `EPERM`, so a live server could not be started from that environment. A user-started Node listener was later observed on port 4318; its live behavior was not verified by these tests. Run `npm start` and `npm run test:http` in a normal local terminal.
 - Docker: daemon socket access denied. Container configuration is delivered but not built/run here.
 - Cursor extension-host smoke test launch returned without its expected result artifact. Activation and visual sidebar behavior are **not confirmed** by the successful package installation.
 - Browser runtime failed during startup on both attempts. Ezio's interactive Try flow and sidebar visual review could not be exercised.

@@ -6,7 +6,7 @@ const {analyze} = require('./provider');
 const {serveDashboard,permittedOrigin} = require('./dashboard');
 const {text,requireValue,validateSnapshot,validateEvidence,fingerprint,decide,scan} = require('./policy');
 function configuration(env=process.env) {
-  const c = {host:env.HOST||'127.0.0.1',port:Number(env.PORT||4318),db:env.TRUSTGATE_DB||'./data/trustgate.sqlite',token:env.TRUSTGATE_TOKEN,reviewerToken:env.TRUSTGATE_REVIEWER_TOKEN,reviewerId:env.TRUSTGATE_REVIEWER_ID||'security-reviewer',hrKey:env.HR_API_KEY,harness:env.HR_HARNESS_ID,hrBase:env.HR_BASE_URL||'https://api.harnessrouter.ai',hrMode:env.HR_MODE||'cloud',demo:env.TRUSTGATE_ALLOW_DEMO==='true',production:env.NODE_ENV==='production'};
+  const c = {host:env.HOST||'127.0.0.1',port:Number(env.PORT||4318),db:env.TRUSTGATE_DB||'./data/trustgate.sqlite',token:env.TRUSTGATE_TOKEN,reviewerToken:env.TRUSTGATE_REVIEWER_TOKEN,reviewerId:env.TRUSTGATE_REVIEWER_ID||'security-reviewer',hrKey:env.HR_API_KEY||env.HARNESSROUTER_KEY,harness:env.HR_HARNESS_ID,hrBase:env.HR_BASE_URL||'https://api.harnessrouter.ai',hrMode:env.HR_MODE||'cloud',demo:env.TRUSTGATE_ALLOW_DEMO==='true',production:env.NODE_ENV==='production'};
   if (!c.token || c.token.length<32 || !c.reviewerToken || c.reviewerToken.length<32 || c.token===c.reviewerToken) throw new Error('Set distinct TRUSTGATE_TOKEN and TRUSTGATE_REVIEWER_TOKEN, each at least 32 characters.');
   const u=new URL(c.hrBase); if(u.protocol!=='https:' && !(u.protocol==='http:' && ['127.0.0.1','localhost'].includes(u.hostname))) throw new Error('Provider requires HTTPS or loopback HTTP');
   if(c.production && (c.demo || !c.hrKey || !c.harness)) throw new Error('Production requires HarnessRouter credentials and demo mode disabled');
