@@ -1,0 +1,31 @@
+{
+  "name": "EV market (SYNTHETIC)",
+  "provenance": "synthetic fixture \u2014 NOT an Ezio export",
+  "evidence": {
+    "scores": {
+      "accuracy": 4,
+      "bias": 4,
+      "tone": 4,
+      "agreement": 4
+    },
+    "coverageComplete": true,
+    "limitations": [],
+    "claims": [
+      {
+        "id": "ev-market-claim-1",
+        "text": "Synthetic ev market claim for policy testing; not a real-world assertion.",
+        "material": true,
+        "verdict": "supported",
+        "quote": "Synthetic ev market claim for policy testing; not a real-world assertion.",
+        "sources": [
+          {
+            "type": "official",
+            "title": "Synthetic test authority \u2014 not an actual citation",
+            "date": "2026-10-01"
+          }
+        ]
+      }
+    ],
+    "findings": []
+  }
+}

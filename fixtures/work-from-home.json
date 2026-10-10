@@ -1,0 +1,27 @@
+{
+  "name": "Work from home (SYNTHETIC)",
+  "provenance": "synthetic fixture \u2014 NOT an Ezio export",
+  "evidence": {
+    "scores": {
+      "accuracy": 4,
+      "bias": 4,
+      "tone": 4,
+      "agreement": 4
+    },
+    "coverageComplete": false,
+    "limitations": [
+      "Only selected claims were checked."
+    ],
+    "claims": [
+      {
+        "id": "work-from-home-claim-1",
+        "text": "Synthetic work from home claim for policy testing; not a real-world assertion.",
+        "material": true,
+        "verdict": "unverified",
+        "quote": "Synthetic work from home claim for policy testing; not a real-world assertion.",
+        "sources": []
+      }
+    ],
+    "findings": []
+  }
+}

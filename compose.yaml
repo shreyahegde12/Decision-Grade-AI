@@ -1,0 +1,23 @@
+services:
+  trustgate:
+    build: .
+    env_file: .env
+    environment:
+      HOST: 0.0.0.0
+      NODE_ENV: production
+      TRUSTGATE_ALLOW_DEMO: 'false'
+      TRUSTGATE_DB: /data/trustgate.sqlite
+    ports:
+      - '127.0.0.1:4318:4318'
+    volumes:
+      - trustgate-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    stop_grace_period: 100s
+volumes:
+  trustgate-data:

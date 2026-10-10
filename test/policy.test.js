@@ -1,0 +1,15 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');
+const {validateEvidence,decide,scan,fingerprint}=require('../src/policy');
+const good=()=>({scores:{accuracy:4,bias:4,tone:4,agreement:4},coverageComplete:true,limitations:[],claims:[{id:'c1',text:'The claim',material:true,verdict:'supported',quote:'The claim is supported',sources:[{type:'official',title:'Primary source',date:'2026-10-01'}]}],findings:[]});
+test('supported, relevant evidence approves report-use decision',()=>{assert.equal(decide(validateEvidence(good(),'The claim is supported')).action,'APPROVE');});
+test('contradiction overrides scores',()=>{const e=good();e.claims[0].verdict='contradicted';assert.equal(decide(e).action,'BLOCK');});
+test('missing evidence is distinct from contradiction',()=>{const e=good();e.claims[0].verdict='unverified';assert.equal(decide(e).action,'ESCALATE');});
+test('source, coverage, relevance, critical and score checks',()=>{for(const change of [e=>e.claims[0].sources=[],e=>e.coverageComplete=false,e=>e.claims[0].material=false,e=>e.scores.accuracy=1,e=>e.limitations=['Not all claims checked']]){const e=good();change(e);assert.equal(decide(e).action,'ESCALATE');}const e=good();e.findings=[{id:'f',severity:'critical',reason:'Critical framing',quote:'framing'}];assert.equal(decide(e).action,'BLOCK');});
+test('code never gets automatic approval from generic evidence',()=>{assert.equal(decide(good(),{code:true}).action,'ESCALATE');assert.equal(decide(null,{code:true}).action,'ESCALATE');});
+test('unanchored evidence and invalid bars rejected',()=>{assert.throws(()=>validateEvidence(good(),'unrelated'));const e=good();e.scores.tone=99;assert.throws(()=>validateEvidence(e));});
+test('duplicate IDs rejected',()=>{const e=good();e.claims.push({...e.claims[0]});assert.throws(()=>validateEvidence(e));});
+test('invalid or future source dates cannot establish high trust',()=>{for(const date of ['2026-99-99','2999-01-01','unknown']){const e=good();e.claims[0].sources[0].date=date;assert.equal(decide(e).action,'ESCALATE');}});
+test('scan only added lines and never quotes secrets',()=>{const secret='AKIA'+'ABCDEFGHIJKLMNOP';assert.equal(scan('-'+secret).length,0);const f=scan('+'+secret);assert.equal(f[0].severity,'critical');assert.ok(!JSON.stringify(f).includes(secret));});
+test('binding changes with scope, range, repository or content',()=>{const s={repo:'r',base:'b',head:'h',scope:'commit',diff:'d'};for(const key of Object.keys(s))assert.notEqual(fingerprint(s),fingerprint({...s,[key]:s[key]+'x'}));});
+module.exports={good};

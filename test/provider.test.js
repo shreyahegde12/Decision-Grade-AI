@@ -1,0 +1,7 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');const http=require('node:http');const {analyze}=require('../src/provider');
+const {transport}=require('./transport');
+test('documented cloud endpoint and bearer header; reject unsupported output',async t=>{
+  let request;let valid=true;const e={scores:{accuracy:4,bias:4,tone:4,agreement:4},coverageComplete:false,limitations:['Partial'],claims:[{id:'c',text:'Claim',quote:'Claim',material:true,verdict:'unverified',sources:[]}],findings:[]};
+  const server=http.createServer((req,res)=>{request={path:req.url,auth:req.headers.authorization};let body='';req.on('data',x=>body+=x);req.on('end',()=>{request.body=JSON.parse(body);res.setHeader('content-type','application/json');res.end(JSON.stringify({status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(valid?e:{...e,claims:[{...e.claims[0],quote:'Invented'}]})}]}]}));});});t.after(()=>new Promise(r=>server.close(r)));const send=await transport(server);const fetcher=(url,opts)=>send(new URL(url).pathname,opts);const config={hrBase:'http://127.0.0.1',hrKey:'secret',harness:'reviewer',hrMode:'cloud'};await analyze({text:'Claim',context:'Publish',kind:'report'},config,fetcher);assert.equal(request.path,'/reviewer/v1/responses');assert.equal(request.auth,'Bearer secret');assert.equal(request.body.stream,false);valid=false;await assert.rejects(()=>analyze({text:'Claim'},config,fetcher),/quote/);
+});
